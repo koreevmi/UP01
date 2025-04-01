@@ -1,0 +1,74 @@
+def task_1():
+    user_string = input("Введите строку для задачи 5.1: ")
+    print((user_string + "\n") * 5)
+    length = len(user_string)
+    print(f"Длина строки: {length}")
+    for index, char in enumerate(user_string):
+        print(f"Индекс {index}: Символ '{char}'")
+    for position in range(1, length + 1):
+        if position % 2 == 0:
+            print(f"Позиция {position}: Символ '{user_string[position - 1]}'")
+
+def task_2():
+    user_string = input("Введите строку для задачи 5.2: ")
+    start_pos = int(input("Введите начальную позицию: "))
+    end_pos = int(input("Введите конечную позицию: "))
+    substring = user_string[start_pos - 1:end_pos]
+    print("Символы в диапазоне:", substring)
+
+def task_3():
+    user_string = input("Введите строку для задачи 5.3: ")
+    if user_string:
+        modified_string = '#' + user_string[1:-1] + '#'
+        print("Измененная строка:", modified_string)
+    else:
+        print("Строка пустая.")
+
+def task_4():
+    user_string = input("Введите строку для задачи 5.4: ")
+    if user_string.isdigit():
+        print("Строка состоит только из цифр.")
+    elif user_string.isalpha():
+        if user_string.islower():
+            print("Строка состоит только из строчных букв.")
+        elif user_string.isupper():
+            print("Строка состоит только из прописных букв.")
+        else:
+            print("Строка состоит из букв разного регистра.")
+    elif user_string.isalnum():
+        print("Строка состоит только из цифр и букв.")
+    else:
+        print("Строка содержит другие символы.")
+
+def task_5():
+    user_string = input("Введите строку для задачи 5.5: ")
+    words = user_string.split()
+    result_string = ",".join(words)
+    print("Результирующая строка:", result_string)
+
+def task_6():
+    substring = input("Введите первую строку для задачи 5.6: ")
+    main_string = input("Введите вторую строку для задачи 5.6: ")
+    positions = [pos + 1 for pos in range(len(main_string)) if main_string.startswith(substring, pos)]
+    count = len(positions)
+    print(f"Первая строка встречается {count} раз на позициях: {positions}")
+
+def task_7():
+    user_string = input("Введите строку для задачи 5.7: ")
+    normalized_string = user_string.lower()
+    is_palindrome = normalized_string == normalized_string[::-1]
+    print("Строка является палиндромом." if is_palindrome else "Строка не является палиндромом.")
+
+def task_8():
+    user_string = input("Введите строку для задачи 5.8: ")
+    modified_string = ' '.join(user_string.split())
+    print("Строка после замены двойных пробелов:", modified_string)
+
+task_1()
+task_2()
+task_3()
+task_4()
+task_5()
+task_6()
+task_7()
+task_8()
