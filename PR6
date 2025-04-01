@@ -1,0 +1,85 @@
+def task_5_1():
+    try:
+        a = float(input("Введите число a для задачи 5.1: "))
+        b = float(input("Введите число b для задачи 5.1: "))
+
+        result = a / b
+        print(f"Результат деления: {result}")
+
+    except ZeroDivisionError:
+        print("Ошибка: Деление на ноль невозможно.")
+    except ValueError:
+        print("Ошибка: Введено некорректное число.")
+
+def task_5_2():
+    try:
+        a = float(input("Введите число a для задачи 5.2: "))
+
+        while True:
+            try:
+                b = float(input("Введите число b для задачи 5.2: "))
+                if b == 0:
+                    raise ZeroDivisionError("Ошибка: Введено 0, введите другое число.")
+                break
+            except ZeroDivisionError as e:
+                print(e)
+            except ValueError:
+                print("Ошибка: Введено некорректное число.")
+
+        result = a / b
+
+    except ValueError:
+        print("Ошибка: Введено некорректное число.")
+    finally:
+        try:
+            print(f"Результат деления: {result}")
+        except UnboundLocalError:
+            print("Деление не было выполнено из-за ошибки.")
+
+def task_5_3():
+    try:
+        x = float(input("Введите число x для задачи 5.3: "))
+        y = float(input("Введите число y для задачи 5.3: "))
+        z = float(input("Введите число z для задачи 5.3: "))
+
+        numerator = (x + y + z) ** 0.5
+        denominator = x - y + z
+
+        if denominator == 0:
+            raise ZeroDivisionError("Ошибка: Деление на ноль невозможно.")
+
+        result = numerator / denominator
+        print(f"Результат выражения: {result}")
+
+    except ValueError:
+        print("Ошибка: Введено некорректное число.")
+    except ZeroDivisionError as e:
+        print(e)
+
+def task_5_4():
+    try:
+        x = float(input("Введите число x для задачи 5.4: "))
+        y = float(input("Введите число y для задачи 5.4: "))
+        z = float(input("Введите число z для задачи 5.4: "))
+
+        numerator = x + y + z
+        if numerator < 0:
+            raise ValueError("Ошибка: Под корнем отрицательное число.")
+
+        denominator = x - y + z
+
+        if denominator == 0:
+            raise ZeroDivisionError("Ошибка: Деление на ноль невозможно.")
+
+        result = (numerator ** 0.5) / denominator
+        print(f"Результат выражения: {result}")
+
+    except ValueError as e:
+        print(e)
+    except ZeroDivisionError as e:
+        print(e)
+
+task_5_1()
+task_5_2()
+task_5_3()
+task_5_4()
