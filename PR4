@@ -1,0 +1,66 @@
+import random
+
+def task_1():
+    n = int(input("Введите количество элементов списка для задачи 5.1: "))
+    random_list = [random.randint(0, 100) for _ in range(n)]
+    for index, value in enumerate(random_list):
+        print(f"Индекс {index}: Значение {value}")
+
+    return random_list
+
+def task_2():
+    n = int(input("Введите количество элементов списка для задачи 5.2: "))
+    user_list = [int(input(f"Введите элемент {i + 1}: ")) for i in range(n)]
+    print("Список:", " ".join(map(str, user_list)))
+    return user_list
+
+def task_3(random_list, user_list):
+    random_list.extend(filter(lambda x: x % 2 == 0, user_list))
+    print("Объединенный список:", " ".join(map(str, random_list)))
+    return random_list
+
+def task_4(combined_list):
+    sorted_list = sorted(combined_list, reverse=True)
+    print("Отсортированный список:", sorted_list)
+
+    return sorted_list
+
+def task_5(sorted_list):
+    number = int(input("Введите число для задачи 5.5: "))
+    count = sorted_list.count(number)
+    sorted_list = [x for x in sorted_list if x != number]
+    print(f"Количество совпадений: {count}")
+    print("Список после удаления совпадений:", sorted_list)
+
+    return sorted_list
+
+def task_6(sorted_list):
+    n = int(input("Введите количество элементов для вставки в задаче 5.6: "))
+    for _ in range(n):
+        index = int(input("Введите индекс для вставки: "))
+        value = int(input("Введите значение для вставки: "))
+        sorted_list.insert(index, value)
+    print("Список после вставки:", sorted_list)
+
+    return sorted_list
+
+def task_7():
+    n = int(input("Введите количество элементов словаря для задачи 5.7: "))
+    book_dict = {input(f"Введите код книги {i + 1}: "): input(f"Введите название книги {i + 1}: ") for i in range(n)}
+    print("Ключи словаря:", list(book_dict.keys()))
+    print("Значения словаря:", list(book_dict.values()))
+
+    return book_dict
+
+def task_8(book_dict):
+    key = input("Введите код книги для поиска в задаче 5.8: ")
+    print("Название книги:", book_dict.get(key, "Книга не найдена"))
+
+random_list = task_1()
+user_list = task_2()
+combined_list = task_3(random_list, user_list)
+sorted_list = task_4(combined_list)
+updated_list = task_5(sorted_list)
+final_list = task_6(updated_list)
+book_dict = task_7()
+task_8(book_dict)
