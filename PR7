@@ -1,0 +1,53 @@
+def power(a: 'число, которое нужно возвести в степень' = 2, x: 'степень, в которую нужно возвести число' = 0) -> float:
+    """
+    Возвращает число a, возведенное в степень x.
+    """
+    return a ** x
+
+def factorial(n: 'число, факториал которого нужно вычислить') -> int:
+    """
+    Рекурсивно вычисляет факториал числа n.
+    Возвращает -1, если входные данные некорректны.
+    """
+    if not isinstance(n, int) or n < 0:
+        return -1
+    if n == 0:
+        return 1
+    return n * factorial(n - 1)
+
+def statistics(*numbers: 'список чисел для вычисления статистик') -> None:
+    """
+    Выводит сумму, среднее, максимум, минимум и количество всех чисел.
+    """
+    if not numbers:
+        print("Нет чисел для вычисления статистик.")
+        return
+
+    total_sum = sum(numbers)
+    average = total_sum / len(numbers)
+    max_value = max(numbers)
+    min_value = min(numbers)
+    count = len(numbers)
+
+    print(f"Сумма: {total_sum}")
+    print(f"Среднее: {average}")
+    print(f"Максимум: {max_value}")
+    print(f"Минимум: {min_value}")
+    print(f"Количество: {count}")
+
+def multiply_list(numbers: 'список чисел', multiplier: 'множитель' = -1) -> list:
+    """
+    Умножает каждый элемент списка на заданное число.
+    Если множитель не указан, умножает на -1.
+    """
+    return [number * multiplier for number in numbers]
+
+# Лямбда-функция для вычисления значения y = a*x + b
+calculate_y = lambda a, x, b: a * x + b
+
+# Тестирование функций
+print("Тестирование функции power:", power(2, 3))  # 8
+print("Тестирование функции factorial:", factorial(5))  # 120
+statistics(1, 2, 3, 4, 5)  # Выводит статистику
+print("Тестирование функции multiply_list:", multiply_list([1, 2, 3], 2))  # [2, 4, 6]
+print("Тестирование лямбда-функции calculate_y:", calculate_y(2, 3, 1))  # 7
