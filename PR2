@@ -1,0 +1,77 @@
+import math
+
+def task_5_1():
+    x = float(input("Введите значение x: "))
+    if x < -10:
+        y = math.pi * x**2
+    elif -10 <= x < -5:
+        y = x**4
+    elif -5 <= x < 10:
+        y = math.e * abs(x)
+    else:
+        y = 1 / math.sin(math.sqrt(x))
+    y_rounded = round(y, 3)
+    print("Значение функции y(x) = {:.3f}".format(y_rounded))
+    print("")
+
+def task_5_2():
+    a = float(input("Введите первое число: "))
+    b = float(input("Введите второе число: "))
+    c = float(input("Введите третье число: "))
+    middle = a if (b <= a <= c) or (c <= a <= b) else b if (a <= b <= c) or (c <= b <= a) else c
+    print("Среднее число: {}".format(middle))
+    print("")
+
+def task_5_3():
+    year = int(input("Введите год: "))
+    month = int(input("Введите номер месяца: "))
+    is_leap = (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0)
+    days_in_month = (29 if is_leap else 28) if month == 2 else 30 if month in [4, 6, 9, 11] else 31
+    print("Количество дней в месяце: {}".format(days_in_month))
+    print("")
+
+def task_5_4():
+    side1 = float(input("Введите длину первой стороны: "))
+    side2 = float(input("Введите длину второй стороны: "))
+    side3 = float(input("Введите длину третьей стороны: "))
+    if side1 + side2 > side3 and side1 + side3 > side2 and side2 + side3 > side1:
+        if side1 == side2 == side3:
+            triangle_type = "равносторонний"
+        elif side1 == side2 or side1 == side3 or side2 == side3:
+            triangle_type = "равнобедренный"
+        else:
+            triangle_type = "Прямоугольный"
+
+        print("Тип треугольника: {}".format(triangle_type))
+        print("")
+    else:
+        print("Треугольник нельзя построить.")
+        print("")
+
+def task_5_5():
+    num1 = int(input("Введите первое целое число: "))
+    num2 = int(input("Введите второе целое число: "))
+    operation = input("Введите битовую операцию (and, or, xor, ls, rs: ")
+    if operation == "and":
+        result = num1 & num2
+    elif operation == "or":
+        result = num1 | num2
+    elif operation == "xor":
+        result = num1 ^ num2
+    elif operation == "ls":
+        result = num1 << num2
+    elif operation == "rs":
+        result = num1 >> num2
+    else:
+        print("Неверная операция.")
+        result = None
+
+    if result is not None:
+        print("Результат операции {}: {:b}".format(operation, result))
+        print("")
+
+task_5_1()
+task_5_2()
+task_5_3()
+task_5_4()
+task_5_5()
