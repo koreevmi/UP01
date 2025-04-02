@@ -1,0 +1,75 @@
+import xml.etree.ElementTree as ET
+import wave
+import sqlite3
+
+def modify_xml(xml_file_path):
+    try:
+        tree = ET.parse(xml_file_path)
+        root = tree.getroot()
+
+        # Пример: изменение текста элемента
+        for elem in root.iter('example'):
+            elem.text = 'Новое значение'
+
+        tree.write(xml_file_path)
+        print(f"XML-файл {xml_file_path} успешно изменен.")
+    except FileNotFoundError:
+        print(f"Файл {xml_file_path} не найден.")
+    except Exception as e:
+        print(f"Ошибка при работе с XML: {e}")
+
+def create_modify_wav(wav_file_path):
+    try:
+        # Создание нового WAV-файла
+        sample_rate = 44100.0  # Частота дискретизации
+        duration = 2.0  # Длительность в секундах
+        n_samples = int(sample_rate * duration)
+
+        # Создание WAV-файла с одним каналом (моно)
+        with wave.open(wav_file_path, 'w') as f:
+            f.setnchannels(1)  # Моно
+            f.setsampwidth(2)  # 16 бит
+            f.setframerate(sample_rate)
+
+            # Запись данных (тишина)
+            f.writeframes(b'\x00' * n_samples * 2)
+
+        print(f"WAV-файл {wav_file_path} успешно создан.")
+    except Exception as e:
+        print(f"Ошибка при работе с WAV: {e}")
+
+def modify_sqlite_db(db_path):
+    try:
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+
+        # Создание таблицы
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS example (
+                id INTEGER PRIMARY KEY,
+                name TEXT NOT NULL
+            )
+        ''')
+
+        # Вставка данных
+        cursor.execute('''
+            INSERT INTO example (name) VALUES ('Пример')
+        ''')
+
+        # Сохранение изменений
+        conn.commit()
+        print(f"База данных {db_path} успешно изменена.")
+    except Exception as e:
+        print(f"Ошибка при работе с SQLite: {e}")
+    finally:
+        conn.close()
+
+# Пример использования
+xml_file_path = input("Введите путь к XML-файлу: ")
+modify_xml(xml_file_path)
+
+wav_file_path = input("Введите путь для создания WAV-файла: ")
+create_modify_wav(wav_file_path)
+
+db_path = input("Введите путь к базе данных SQLite: ")
+modify_sqlite
