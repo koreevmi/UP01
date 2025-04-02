@@ -60,4 +60,41 @@ class AuthorBook(Author, Book):
         country - страна проживания автора
         book_title - название книги
         """
-        Author.__init__(self, full_name, country
+        Author.__init__(self, full_name, country)
+        Book.__init__(self, book_title)
+
+    def author_and_book_info(self):
+        """
+        Выводит информацию о книге и авторе на экран.
+        """
+        self.author_info()
+        self.book_info()
+
+def main():
+    # Создание списка авторов
+    authors = []
+    n = int(input("Введите количество авторов: "))
+    for i in range(n):
+        full_name = input(f"Введите ФИО автора {i+1}: ")
+        country = input(f"Введите страну автора {i+1}: ")
+        authors.append(Author(full_name, country))
+
+    # Вывод всех авторов
+    print("\nСписок всех авторов:")
+    for author in authors:
+        author.author_info()
+
+    # Вывод только русских авторов
+    print("\nСписок русских авторов:")
+    for author in authors:
+        if author.country.lower() == "россия":
+            author.author_info()
+
+    # Пример использования класса AuthorBook
+    author_book = AuthorBook("Лев Толстой", "Россия", "Война и мир")
+    author_book.add_piece("Часть 1")
+    author_book.add_piece("Часть 2")
+    author_book.author_and_book_info()
+
+if __name__ == "__main__":
+    main()
