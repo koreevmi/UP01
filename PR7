@@ -1,74 +1,51 @@
-def hello(name=None):
+def power(a: 'число, которое нужно возвести в степень' = 2, x: 'степень, в которую нужно возвести число' = 0) -> float:
     """
-    Выводит приветственное сообщение.
-    name - имя, которое будет использовано в приветствии (по умолчанию: None)
+    Возвращает число a, возведенное в степень x.
     """
-    if name:
-        print(f"Hello, {name}")
-    else:
-        print("Hello, World")
+    return a ** x
 
-def arithmetic(a, b, operation):
+def factorial(n: 'число, факториал которого нужно вычислить') -> int:
     """
-    Выполняет арифметическую операцию над двумя числами.
-    a - первое число
-    b - второе число
-    operation - операция, которую нужно выполнить (+, -, *, /)
+    Рекурсивно вычисляет факториал числа n.
+    Возвращает -1, если входные данные некорректны.
     """
-    if operation == '+':
-        return a + b
-    elif operation == '-':
-        return a - b
-    elif operation == '*':
-        return a * b
-    elif operation == '/':
-        if b != 0:
-            return a / b
-        else:
-            return "Деление на ноль невозможно"
-    else:
-        return "Неизвестная операция"
+    if not isinstance(n, int) or n < 0:
+        return -1
+    if n == 0:
+        return 1
+    return n * factorial(n - 1)
 
-def square(side):
+def statistics(*numbers: 'список чисел для вычисления статистик') -> None:
     """
-    Возвращает периметр, площадь и диагональ квадрата.
-    side - длина стороны квадрата
+    Выводит сумму, среднее, максимум, минимум и количество всех чисел.
     """
-    perimeter = 4 * side
-    area = side ** 2
-    diagonal = side * (2 ** 0.5)
-    return perimeter, area, diagonal
+    if not numbers:
+        print("Нет чисел для вычисления статистик.")
+        return
 
-def season(month):
-    """
-    Определяет время года по номеру месяца.
-    month - номер месяца (от 1 до 12)
-    """
-    if month in [12, 1, 2]:
-        return "зима"
-    elif month in [3, 4, 5]:
-        return "весна"
-    elif month in [6, 7, 8]:
-        return "лето"
-    elif month in [9, 10, 11]:
-        return "осень"
-    else:
-        return "Некорректный номер месяца"
+    total_sum = sum(numbers)
+    average = total_sum / len(numbers)
+    max_value = max(numbers)
+    min_value = min(numbers)
+    count = len(numbers)
 
-def bank(a, years):
-    """
-    Вычисляет сумму на счету через определенное количество лет.
-    a - начальная сумма вклада
-    years - количество лет
-    """
-    for _ in range(years):
-        a *= 1.10
-    return a
+    print(f"Сумма: {total_sum}")
+    print(f"Среднее: {average}")
+    print(f"Максимум: {max_value}")
+    print(f"Минимум: {min_value}")
+    print(f"Количество: {count}")
 
-# Тестирование функций
-if __name__ == "__main__":
-    hello("Алиса")
-    print(arithmetic(10, 5, '+'))
-    print(square(4))
-    print(season(3))
-    print(bank(1000, 5))
+def multiply_list(numbers: 'список чисел', multiplier: 'множитель' = -1) -> list:
+    """
+    Умножает каждый элемент списка на заданное число.
+    Если множитель не указан, умножает на -1.
+    """
+    return [number * multiplier for number in numbers]
+
+calculate_y = lambda a, x, b: a * x + b
+
+print("Тестирование функции power:", power(2, 3))  # 8
+print("Тестирование функции factorial:", factorial(5))  # 120
+statistics(1, 2, 3, 4, 5)  # Выводит статистику
+print("Тестирование функции multiply_list:", multiply_list([1, 2, 3], 2))  # [2, 4, 6]
+print("Тестирование лямбда-функции calculate_y:", calculate_y(2, 3, 1))  # 7
