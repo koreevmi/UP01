@@ -1,0 +1,39 @@
+import re
+
+# 5.1 Разделение строки на предложения
+text_sentences = "Привет! Как дела? Все хорошо... Надеюсь, у тебя тоже."
+sentences = re.split(r'(?<=[.!?…])\s*', text_sentences)
+print("Предложения:")
+for sentence in sentences:
+    print(sentence)
+
+# 5.2 Замена слов и фраз
+text_replace = "Он редиска. Они нехорошие люди."
+modified_text = re.sub(r'\bредиск[а-я]*\b|\bнехорош[а-я]*\sчеловек[а-я]*\b', '*давайте жить дружно*', text_replace)
+print("\nЗамененный текст:")
+print(modified_text)
+
+# 5.3 Выделение дат
+text_dates = "Сегодня 12.05.2023, а завтра 13.5.23."
+dates = re.findall(r'\b\d{1,2}\.\d{1,2}\.\d{2,4}\b', text_dates)
+print("\nДаты:")
+for date in dates:
+    print(date)
+
+# 5.4 Проверка пароля
+def check_password(password):
+    if len(password) < 6:
+        return False
+    if not re.search(r'[A-Z]', password):
+        return False
+    if not re.search(r'[a-z]', password):
+        return False
+    if not re.search(r'\d', password):
+        return False
+    return True
+
+password = ""
+while not check_password(password):
+    password = input("\nВведите пароль: ")
+
+print("Пароль надежен.")
