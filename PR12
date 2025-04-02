@@ -1,0 +1,93 @@
+import os
+
+def read_and_execute_file(file_path):
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            content = file.read()
+            print(content)
+
+            _, ext = os.path.splitext(file_path)
+            if ext == '.py':
+                exec(content)
+    except FileNotFoundError:
+        print(f"Файл {file_path} не найден.")
+    except Exception as e:
+        print(f"Ошибка при выполнении скрипта: {e}")
+
+def write_to_file(file_path):
+    mode = 'a'
+    if os.path.exists(file_path):
+        choice = input("Файл существует. Введите 'дописать' или 'перезаписать': ").strip().lower()
+        if choice == 'перезаписать':
+            mode = 'w'
+
+    with open(file_path, mode, encoding='utf-8') as file:
+        while True:
+            line = input("Введите строку (или 'end' для завершения): ")
+            if line == 'end':
+                break
+            file.write(line + '\n')
+
+def file_operations(file_path):
+    try:
+        if not os.path.exists(file_path):
+            print(f"Файл {file_path} не найден.")
+            return
+
+        operation = input("Выберите операцию: 'вывод', 'удаление', 'переименование': ").strip().lower()
+        if operation == 'вывод':
+            with open(file_path, 'r', encoding='utf-8') as file:
+                print(file.read())
+        elif operation == 'удаление':
+            os.remove(file_path)
+            print(f"Файл {file_path} удален.")
+        elif operation == 'переименование':
+            new_name = input("Введите новое имя файла: ")
+            os.rename(file_path, new_name)
+            print(f"Файл переименован в {new_name}.")
+        else:
+            print("Неверная операция.")
+    except Exception as e:
+        print(f"Ошибка: {e}")
+
+def delete_txt_files(directory):
+    for root, _, files in os.walk(directory):
+        for file in files:
+            if file.endswith('.txt'):
+                file_path = os.path.join(root, file)
+                os.remove(file_path)
+                print(f"Удален файл: {file_path}")
+
+def list_directory_contents(directory, output_file):
+    with open(output_file, 'w', encoding='utf-8') as file:
+        for root, dirs, files in os.walk(directory):
+            for name in dirs:
+                dir_path = os.path.join(root, name)
+                dir_size = sum(os.path.getsize(os.path.join(dir_path, f)) for f in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, f)))
+                file.write(f"Директория: {dir_path}, Размер: {dir_size / 1024:.2f} KB\n")
+            for name in files:
+                file_path = os.path.join(root, name)
+                file_size = os.path.getsize(file_path)
+                file.write(f"Файл: {file_path}, Размер: {file_size / 1024:.2f} KB\n")
+
+# Пример использования
+# Задание 5.1
+file_path_1 = input("Введите название файла для вывода содержимого: ")
+read_and_execute_file(file_path_1)
+
+# Задание 5.2
+file_path_2 = input("Введите название файла для записи: ")
+write_to_file(file_path_2)
+
+# Задание 5.3
+file_path_3 = input("Введите название файла для операций: ")
+file_operations(file_path_3)
+
+# Задание 5.4
+directory_4 = input("Введите директорию для удаления .txt файлов: ")
+delete_txt_files(directory_4)
+
+# Задание 5.5
+directory_5 = input("Введите директорию для списка: ")
+output_file_5 = input("Введите название выходного файла: ")
+list_directory_contents(directory_5, output_file_5)
