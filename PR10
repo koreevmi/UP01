@@ -1,0 +1,25 @@
+def calculate_factorial(n):
+    fact = 1
+    for x in range(2, n+1):
+        fact = fact * x
+    return fact
+
+n = int(input("n="))
+result = calculate_factorial(n)
+print(result)
+
+
+
+
+import pdb
+
+def calculate_factorial(n):
+    fact = 1
+    for x in range(2, n+1):
+        fact = fact * x
+    return fact
+
+n = int(input("n="))
+pdb.set_trace()  # Установка точки останова
+result = calculate_factorial(n)
+print(result)
