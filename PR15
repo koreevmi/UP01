@@ -1,0 +1,104 @@
+import tkinter as tk
+from tkinter import ttk, filedialog
+
+def create_combined_application():
+    # Создаем главное окно приложения
+    root = tk.Tk()
+    root.title("Комбинированное приложение")
+    root.geometry("400x300")
+
+    # Создаем виджет вкладок
+    tab_control = ttk.Notebook(root)
+
+    # Вкладка 1: Сохранение текста
+    save_tab = ttk.Frame(tab_control)
+    tab_control.add(save_tab, text="Сохранение текста")
+
+    # Многострочное поле ввода для текста
+    text_area = tk.Text(save_tab, height=10, width=30)
+    text_area.pack()
+
+    # Функция для сохранения текста в файл
+    def save_text():
+        text_content = text_area.get("1.0", tk.END)
+        file_path = filedialog.asksaveasfilename(defaultextension=".txt",
+                                                 filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")])
+        if file_path:
+            with open(file_path, "w") as file:
+                file.write(text_content)
+
+    # Кнопка для сохранения текста
+    save_button = tk.Button(save_tab, text="Сохранить", command=save_text)
+    save_button.pack()
+
+    # Привязка сочетаний клавиш для сохранения и закрытия окна
+    root.bind("<Control-s>", lambda event: save_text())
+    root.bind("<Escape>", lambda event: root.destroy())
+
+    # Вкладка 2: Активное поле ввода
+    input_tab = ttk.Frame(tab_control)
+    tab_control.add(input_tab, text="Активное поле ввода")
+
+    # Три поля ввода
+    entry1 = tk.Entry(input_tab, name="entry1")
+    entry1.pack(pady=5)
+
+    entry2 = tk.Entry(input_tab, name="entry2")
+    entry2.pack(pady=5)
+
+    entry3 = tk.Entry(input_tab, name="entry3")
+    entry3.pack(pady=5)
+
+    # Метка для отображения активного поля
+    label = tk.Label(input_tab, text="Нажмите на поле ввода")
+    label.pack(pady=10)
+
+    # Функции для обработки нажатий мыши
+    def on_left_click(event):
+        label.config(text=f"Активное поле: {event.widget.winfo_name()}")
+
+    def on_right_click(event):
+        print(f"Активное поле: {event.widget.winfo_name()}")
+
+    # Привязка событий нажатия мыши к полям ввода
+    root.bind_class("Entry", "<Button-1>", on_left_click)
+    root.bind_class("Entry", "<Button-3>", on_right_click)
+
+    # Вкладка 3: Координаты мыши
+    mouse_tab = ttk.Frame(tab_control)
+    tab_control.add(mouse_tab, text="Координаты мыши")
+
+    # Метка для отображения координат мыши
+    mouse_label = tk.Label(mouse_tab, text="Координаты мыши")
+    mouse_label.pack(pady=20)
+
+    # Функция для обновления координат мыши
+    def on_mouse_move(event):
+        mouse_label.config(text=f"Координаты мыши: x={event.x}, y={event.y}")
+
+    # Привязка события движения мыши
+    root.bind("<Motion>", on_mouse_move)
+
+    # Вкладка 4: Нажатые клавиши
+    key_tab = ttk.Frame(tab_control)
+    tab_control.add(key_tab, text="Нажатые клавиши")
+
+    # Метка для отображения нажатых клавиш
+    key_label = tk.Label(key_tab, text="Нажатые клавиши: ")
+    key_label.pack(pady=20)
+
+    # Функция для обновления метки с нажатыми клавишами
+    def on_key_press(event):
+        if event.char:
+            key_label.config(text=f"{key_label['text']}{event.char}")
+
+    # Привязка события нажатия клавиш
+    root.bind("<Key>", on_key_press)
+
+    # Упаковываем виджет вкладок
+    tab_control.pack(expand=1, fill="both")
+
+    # Запускаем главный цикл обработки событий
+    root.mainloop()
+
+create_combined_application()
