@@ -2,74 +2,74 @@ import xml.etree.ElementTree as ET
 import wave
 import sqlite3
 
-def modify_xml(xml_file_path):
-    try:
-        tree = ET.parse(xml_file_path)
-        root = tree.getroot()
+def modify_xml(file_path):
+    """Модифицирует XML-файл."""
+    tree = ET.parse(file_path)
+    root = tree.getroot()
 
-        # Пример: изменение текста элемента
-        for elem in root.iter('example'):
-            elem.text = 'Новое значение'
+    print("Текущее содержимое XML:")
+    ET.dump(root)
 
-        tree.write(xml_file_path)
-        print(f"XML-файл {xml_file_path} успешно изменен.")
-    except FileNotFoundError:
-        print(f"Файл {xml_file_path} не найден.")
-    except Exception as e:
-        print(f"Ошибка при работе с XML: {e}")
+    for elem in root.iter('item'):
+        elem.set('price', '100')
+        elem.text = 'Modified Item'
 
-def create_modify_wav(wav_file_path):
-    try:
-        # Создание нового WAV-файла
-        sample_rate = 44100.0  # Частота дискретизации
-        duration = 2.0  # Длительность в секундах
-        n_samples = int(sample_rate * duration)
+    tree.write(file_path)
+    print("XML успешно изменен.")
 
-        # Создание WAV-файла с одним каналом (моно)
-        with wave.open(wav_file_path, 'w') as f:
-            f.setnchannels(1)  # Моно
-            f.setsampwidth(2)  # 16 бит
-            f.setframerate(sample_rate)
+def create_modify_wav(file_path):
+    """Создает и модифицирует WAV-файл."""
+    sample_rate = 44100.0
+    duration = 2.0
+    freq = 440.0
 
-            # Запись данных (тишина)
-            f.writeframes(b'\x00' * n_samples * 2)
+    with wave.open(file_path, 'w') as f:
+        n_channels = 1
+        sampwidth = 2
+        n_frames = int(sample_rate * duration)
+        comptype = "NONE"
+        compname = "not compressed"
+        f.setparams((n_channels, sampwidth, int(sample_rate), n_frames, comptype, compname))
 
-        print(f"WAV-файл {wav_file_path} успешно создан.")
-    except Exception as e:
-        print(f"Ошибка при работе с WAV: {e}")
+        for i in range(int(n_frames)):
+            sample = 32767.0 * float(i) / n_frames
+            sample = int(sample * 2 * (i % sample_rate) / sample_rate)
+            f.writeframes(sample.to_bytes(sampwidth, 'little'))
 
-def modify_sqlite_db(db_path):
-    try:
-        conn = sqlite3.connect(db_path)
-        cursor = conn.cursor()
+    print("WAV-файл успешно создан.")
 
-        # Создание таблицы
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS example (
-                id INTEGER PRIMARY KEY,
-                name TEXT NOT NULL
-            )
-        ''')
+def modify_sqlite(db_path):
+    """Считывает и модифицирует информацию в базе данных SQLite."""
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
 
-        # Вставка данных
-        cursor.execute('''
-            INSERT INTO example (name) VALUES ('Пример')
-        ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL,
+            age INTEGER
+        )
+    ''')
 
-        # Сохранение изменений
-        conn.commit()
-        print(f"База данных {db_path} успешно изменена.")
-    except Exception as e:
-        print(f"Ошибка при работе с SQLite: {e}")
-    finally:
-        conn.close()
+    cursor.execute('INSERT INTO users (name, age) VALUES (?, ?)', ('Alice', 30))
+    cursor.execute('INSERT INTO users (name, age) VALUES (?, ?)', ('Bob', 25))
 
-# Пример использования
-xml_file_path = input("Введите путь к XML-файлу: ")
-modify_xml(xml_file_path)
+    cursor.execute('UPDATE users SET age = ? WHERE name = ?', (31, 'Alice'))
 
-wav_file_path = input("Введите путь для создания WAV-файла: ")
-create_modify_wav(wav_file_path)
+    cursor.execute('SELECT * FROM users')
+    rows = cursor.fetchall()
+    print("Текущие данные в таблице users:")
+    for row in rows:
+        print(row)
 
-db_path = input("Введите путь к базе данных SQLite: ")
-modify_sqlite
+    conn.commit()
+    conn.close()
+
+def main():
+    # Пример использования функций
+    modify_xml('example.xml')
+    create_modify_wav('example.wav')
+    modify_sqlite('example.db')
+
+if __name__ == "__main__":
+    main()
