@@ -1,0 +1,96 @@
+import tkinter as tk
+from tkinter import ttk
+
+def create_application():
+    # Создаем главное окно приложения
+    root = tk.Tk()
+    root.title("Приложение с несколькими вкладками")
+    root.geometry("300x400")
+
+    # Создаем виджет вкладок
+    tab_control = ttk.Notebook(root)
+
+    # Вкладка "Форма авторизации"
+    auth_tab = ttk.Frame(tab_control)
+    tab_control.add(auth_tab, text="Форма авторизации")
+
+    # Добавляем элементы на вкладку авторизации
+    tk.Label(auth_tab, text="Логин").pack()
+    login_entry = tk.Entry(auth_tab)
+    login_entry.pack()
+
+    tk.Label(auth_tab, text="Пароль").pack()
+    password_entry = tk.Entry(auth_tab, show="*")
+    password_entry.pack()
+
+    remember_password = tk.BooleanVar()
+    remember_check = tk.Checkbutton(auth_tab, text="Запомнить пароль", variable=remember_password)
+    remember_check.pack()
+
+    auth_button = tk.Button(auth_tab, text="Авторизоваться")
+    auth_button.pack()
+
+    # Вкладка "Форма регистрации"
+    reg_tab = ttk.Frame(tab_control)
+    tab_control.add(reg_tab, text="Форма регистрации")
+
+    # Добавляем элементы на вкладку регистрации
+    tk.Label(reg_tab, text="Логин").pack()
+    login_entry = tk.Entry(reg_tab)
+    login_entry.pack()
+
+    tk.Label(reg_tab, text="Пароль").pack()
+    password_entry = tk.Entry(reg_tab, show="*")
+    password_entry.pack()
+
+    tk.Label(reg_tab, text="О себе").pack()
+    about_text = tk.Text(reg_tab, height=5, width=30)
+    about_text.pack()
+
+    tk.Label(reg_tab, text="Пол").pack()
+    gender = tk.StringVar(value="Мужской")
+    tk.Radiobutton(reg_tab, text="Мужской", variable=gender, value="Мужской").pack()
+    tk.Radiobutton(reg_tab, text="Женский", variable=gender, value="Женский").pack()
+
+    tk.Label(reg_tab, text="Материк").pack()
+    continents = ["Африка", "Антарктида", "Азия", "Европа", "Северная Америка", "Южная Америка", "Австралия"]
+    continent_var = tk.StringVar(value=continents[0])
+    continent_menu = tk.OptionMenu(reg_tab, continent_var, *continents)
+    continent_menu.pack()
+
+    register_button = tk.Button(reg_tab, text="Зарегистрироваться")
+    register_button.pack()
+
+    # Вкладка "Пример виджетов с переменными"
+    var_tab = ttk.Frame(tab_control)
+    tab_control.add(var_tab, text="Виджеты с переменными")
+
+    # Добавляем элементы на вкладку с виджетами и переменными
+    input_var = tk.StringVar()
+    check_var = tk.BooleanVar()
+    radio_var = tk.StringVar(value="Опция 1")
+
+    tk.Entry(var_tab, textvariable=input_var).pack()
+    tk.Checkbutton(var_tab, text="Флажок", variable=check_var).pack()
+    tk.Radiobutton(var_tab, text="Опция 1", variable=radio_var, value="Опция 1").pack()
+    tk.Radiobutton(var_tab, text="Опция 2", variable=radio_var, value="Опция 2").pack()
+
+    # Функция для обновления метки с текущими значениями переменных
+    def update_label():
+        result_label.config(text=f"{input_var.get()}, {check_var.get()}, {radio_var.get()}")
+
+    result_label = tk.Label(var_tab)
+    result_label.pack()
+
+    update_button = tk.Button(var_tab, text="Обновить", command=update_label)
+    update_button.pack()
+
+    # Вкладка "Приложение с меню"
+    menu_tab = ttk.Frame(tab_control)
+    tab_control.add(menu_tab, text="Приложение с меню")
+
+    # Функции для изменения цвета и размера окна
+    def set_color(color):
+        menu_tab.config(bg=color)
+
+    def set_size(size):
