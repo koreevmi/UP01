@@ -1,96 +1,116 @@
 import tkinter as tk
 from tkinter import ttk
 
-def create_application():
-    # Создаем главное окно приложения
-    root = tk.Tk()
-    root.title("Приложение с несколькими вкладками")
-    root.geometry("300x400")
+# 5.1 Форма авторизации
+def create_login_form():
+    login_window = tk.Toplevel(root)
+    login_window.title("Форма авторизации")
+    login_window.geometry("200x300")
 
-    # Создаем виджет вкладок
-    tab_control = ttk.Notebook(root)
-
-    # Вкладка "Форма авторизации"
-    auth_tab = ttk.Frame(tab_control)
-    tab_control.add(auth_tab, text="Форма авторизации")
-
-    # Добавляем элементы на вкладку авторизации
-    tk.Label(auth_tab, text="Логин").pack()
-    login_entry = tk.Entry(auth_tab)
+    tk.Label(login_window, text="Логин").pack()
+    login_entry = tk.Entry(login_window)
     login_entry.pack()
 
-    tk.Label(auth_tab, text="Пароль").pack()
-    password_entry = tk.Entry(auth_tab, show="*")
+    tk.Label(login_window, text="Пароль").pack()
+    password_entry = tk.Entry(login_window, show="*")
     password_entry.pack()
 
-    remember_password = tk.BooleanVar()
-    remember_check = tk.Checkbutton(auth_tab, text="Запомнить пароль", variable=remember_password)
-    remember_check.pack()
+    remember_me = tk.BooleanVar()
+    tk.Checkbutton(login_window, text="Запомнить пароль", variable=remember_me).pack()
 
-    auth_button = tk.Button(auth_tab, text="Авторизоваться")
-    auth_button.pack()
+    tk.Button(login_window, text="Авторизоваться").pack()
 
-    # Вкладка "Форма регистрации"
-    reg_tab = ttk.Frame(tab_control)
-    tab_control.add(reg_tab, text="Форма регистрации")
+# 5.2 Форма регистрации
+def create_registration_form():
+    registration_window = tk.Toplevel(root)
+    registration_window.title("Форма регистрации")
+    registration_window.configure(bg="lightgrey")
 
-    # Добавляем элементы на вкладку регистрации
-    tk.Label(reg_tab, text="Логин").pack()
-    login_entry = tk.Entry(reg_tab)
+    tk.Label(registration_window, text="Логин").pack()
+    login_entry = tk.Entry(registration_window)
     login_entry.pack()
 
-    tk.Label(reg_tab, text="Пароль").pack()
-    password_entry = tk.Entry(reg_tab, show="*")
+    tk.Label(registration_window, text="Пароль").pack()
+    password_entry = tk.Entry(registration_window, show="*")
     password_entry.pack()
 
-    tk.Label(reg_tab, text="О себе").pack()
-    about_text = tk.Text(reg_tab, height=5, width=30)
+    tk.Label(registration_window, text="О себе").pack()
+    about_text = tk.Text(registration_window, height=5)
     about_text.pack()
 
-    tk.Label(reg_tab, text="Пол").pack()
-    gender = tk.StringVar(value="Мужской")
-    tk.Radiobutton(reg_tab, text="Мужской", variable=gender, value="Мужской").pack()
-    tk.Radiobutton(reg_tab, text="Женский", variable=gender, value="Женский").pack()
+    tk.Label(registration_window, text="Пол").pack()
+    gender = tk.StringVar()
+    ttk.Radiobutton(registration_window, text="Мужской", variable=gender, value="Мужской").pack()
+    ttk.Radiobutton(registration_window, text="Женский", variable=gender, value="Женский").pack()
 
-    tk.Label(reg_tab, text="Материк").pack()
+    tk.Label(registration_window, text="Материк").pack()
     continents = ["Африка", "Антарктида", "Азия", "Европа", "Северная Америка", "Южная Америка", "Австралия"]
-    continent_var = tk.StringVar(value=continents[0])
-    continent_menu = tk.OptionMenu(reg_tab, continent_var, *continents)
+    continent_var = tk.StringVar()
+    continent_menu = ttk.OptionMenu(registration_window, continent_var, continents[0], *continents)
     continent_menu.pack()
 
-    register_button = tk.Button(reg_tab, text="Зарегистрироваться")
-    register_button.pack()
+    tk.Button(registration_window, text="Зарегистрироваться").pack()
 
-    # Вкладка "Пример виджетов с переменными"
-    var_tab = ttk.Frame(tab_control)
-    tab_control.add(var_tab, text="Виджеты с переменными")
+# 5.3 Привязка виджетов к переменным
+def create_variable_binding_form():
+    binding_window = tk.Toplevel(root)
+    binding_window.title("Привязка виджетов")
 
-    # Добавляем элементы на вкладку с виджетами и переменными
     input_var = tk.StringVar()
     check_var = tk.BooleanVar()
-    radio_var = tk.StringVar(value="Опция 1")
+    radio_var = tk.StringVar()
 
-    tk.Entry(var_tab, textvariable=input_var).pack()
-    tk.Checkbutton(var_tab, text="Флажок", variable=check_var).pack()
-    tk.Radiobutton(var_tab, text="Опция 1", variable=radio_var, value="Опция 1").pack()
-    tk.Radiobutton(var_tab, text="Опция 2", variable=radio_var, value="Опция 2").pack()
+    tk.Entry(binding_window, textvariable=input_var).pack()
+    tk.Checkbutton(binding_window, text="Флажок", variable=check_var).pack()
+    ttk.Radiobutton(binding_window, text="Опция 1", variable=radio_var, value="Опция 1").pack()
+    ttk.Radiobutton(binding_window, text="Опция 2", variable=radio_var, value="Опция 2").pack()
 
-    # Функция для обновления метки с текущими значениями переменных
     def update_label():
-        result_label.config(text=f"{input_var.get()}, {check_var.get()}, {radio_var.get()}")
+        label_var.set(f"{input_var.get()}, {check_var.get()}, {radio_var.get()}")
 
-    result_label = tk.Label(var_tab)
-    result_label.pack()
+    label_var = tk.StringVar()
+    tk.Label(binding_window, textvariable=label_var).pack()
 
-    update_button = tk.Button(var_tab, text="Обновить", command=update_label)
-    update_button.pack()
+    tk.Button(binding_window, text="Обновить", command=update_label).pack()
 
-    # Вкладка "Приложение с меню"
-    menu_tab = ttk.Frame(tab_control)
-    tab_control.add(menu_tab, text="Приложение с меню")
+# 5.4 Меню с командами
+def create_menu_app():
+    menu_window = tk.Toplevel(root)
+    menu_window.title("Меню")
 
-    # Функции для изменения цвета и размера окна
     def set_color(color):
-        menu_tab.config(bg=color)
+        menu_window.configure(bg=color)
 
     def set_size(size):
+        menu_window.geometry(size)
+
+    menu = tk.Menu(menu_window)
+    menu_window.config(menu=menu)
+
+    color_menu = tk.Menu(menu, tearoff=0)
+    menu.add_cascade(label="Color", menu=color_menu)
+    color_menu.add_command(label="Red", command=lambda: set_color("red"), accelerator="Ctrl+R")
+    color_menu.add_command(label="Green", command=lambda: set_color("green"), accelerator="Ctrl+G")
+    color_menu.add_command(label="Blue", command=lambda: set_color("blue"), accelerator="Ctrl+B")
+
+    size_menu = tk.Menu(menu, tearoff=0)
+    menu.add_cascade(label="Size", menu=size_menu)
+    size_menu.add_command(label="500x500", command=lambda: set_size("500x500"), accelerator="Ctrl+1")
+    size_menu.add_command(label="700x400", command=lambda: set_size("700x400"), accelerator="Ctrl+2")
+
+    menu_window.bind_all("<Control-r>", lambda event: set_color("red"))
+    menu_window.bind_all("<Control-g>", lambda event: set_color("green"))
+    menu_window.bind_all("<Control-b>", lambda event: set_color("blue"))
+    menu_window.bind_all("<Control-1>", lambda event: set_size("500x500"))
+    menu_window.bind_all("<Control-2>", lambda event: set_size("700x400"))
+
+# Основное окно
+root = tk.Tk()
+root.withdraw()  # Скрываем основное окно
+
+create_login_form()
+create_registration_form()
+create_variable_binding_form()
+create_menu_app()
+
+root.mainloop()
