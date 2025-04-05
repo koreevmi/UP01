@@ -1,0 +1,89 @@
+import socket
+import threading
+import tkinter as tk
+from tkinter import simpledialog
+from datetime import datetime
+
+HOST = 'localhost'
+PORT = 50007
+
+# Сервер
+def start_server():
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind((HOST, PORT))
+    server_socket.listen(5)
+    print(f"Сервер слушает на порту {PORT}")
+
+    clients = {}
+
+    while True:
+        conn, addr = server_socket.accept()
+        login = conn.recv(1024).decode('utf-8')
+        clients[addr] = conn
+        print(f"Подключился {login}")
+
+        while True:
+            data = conn.recv(1024)
+            if not data:
+                break
+            message = data.decode('utf-8')
+            timestamp = datetime.now().strftime("%Y.%m.%d %H:%M:%S")
+            print(f"{timestamp} {login}: {message}")
+
+        conn.close()
+        del clients[addr]
+
+# Консольный клиент
+def start_console_client():
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_socket.connect((HOST, PORT))
+
+    login = input("Введите логин: ")
+    client_socket.sendall(login.encode())
+
+    while True:
+        message = input("Введите сообщение (или 'end' для завершения): ")
+        if message.lower() == 'end':
+            break
+        client_socket.sendall(message.encode())
+
+    client_socket.close()
+
+# Оконный клиент
+def start_gui_client():
+    def send_message():
+        message = message_entry.get()
+        client_socket.sendall(message.encode())
+        message_entry.delete(0, tk.END)
+
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_socket.connect((HOST, PORT))
+
+    login = simpledialog.askstring("Input", "Введите логин:")
+    client_socket.sendall(login.encode())
+
+    root = tk.Tk()
+    root.title("Чат")
+
+    login_label = tk.Label(root, text="Логин: " + login)
+    login_label.pack()
+
+    message_entry = tk.Entry(root, width=50)
+    message_entry.pack()
+
+    send_button = tk.Button(root, text="Отправить", command=send_message)
+    send_button.pack()
+
+    root.mainloop()
+    client_socket.close()
+
+# Запуск сервера в отдельном потоке
+server_thread = threading.Thread(target=start_server)
+server_thread.daemon = True
+server_thread.start()
+
+# Запуск консольного клиента
+# start_console_client()
+
+# Запуск оконного клиента
+start_gui_client()
