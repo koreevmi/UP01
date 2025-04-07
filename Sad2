@@ -1,0 +1,208 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="YourNamespace.Views.ControlsView">
+
+    <StackPanel>
+        <!-- TextBlock with Run elements -->
+        <TextBlock>
+            <Span FontSize="16" Background="LightGray">
+                <Run Text="Hello, " Foreground="Red"/>
+                <Run Text="World!" Foreground="Green"/>
+            </Span>
+            <LineBreak/>
+            <Run Text="Welcome to " Foreground="Blue"/>
+            <Run Text="Avalonia!" Foreground="Purple"/>
+            <InlineUIContainer BaselineAlignment="Baseline">
+                <Image Width="32" Height="32" VerticalAlignment="Top" Source="/Assets/avalonia-logo.ico"/>
+            </InlineUIContainer>
+            <InlineUIContainer>
+                <Button Content="Click Me"/>
+            </InlineUIContainer>
+        </TextBlock>
+
+        <!-- TextBox for login and password -->
+        <TextBox Watermark="Login" Text="{Binding Login}"/>
+        <TextBox Watermark="Password" PasswordChar="*" Text="{Binding Password}"/>
+        <TextBox Watermark="Email" TextInputOptions.ContentType="Email"/>
+        <TextBox Watermark="Code" TextInputOptions.ContentType="Number"/>
+
+        <!-- CheckBox -->
+        <CheckBox Content="Check me"/>
+
+        <!-- RadioButton -->
+        <RadioButton GroupName="Group1" Content="Option 1"/>
+        <RadioButton GroupName="Group1" Content="Option 2"/>
+        <RadioButton GroupName="Group2" Content="Option 3"/>
+        <RadioButton GroupName="Group2" Content="Option 4"/>
+
+        <!-- CalendarDatePicker -->
+        <CalendarDatePicker SelectedDate="{Binding SelectedDate}"/>
+        <TextBlock Text="{Binding Age}"/>
+
+        <!-- ComboBox -->
+        <ComboBox Items="{Binding Languages}" SelectedItem="{Binding SelectedLanguage}"/>
+        <TextBlock Text="{Binding SelectedLanguage}"/>
+
+        <!-- Slider and Rectangle -->
+        <Slider Minimum="0" Maximum="1" Value="{Binding SliderValue}"/>
+        <Rectangle Width="100" Height="100" Fill="Blue" Opacity="{Binding SliderValue}"/>
+
+        <!-- ToggleSwitch -->
+        <ToggleSwitch OnContent="Enabled" OffContent="Disabled"/>
+    </StackPanel>
+</UserControl>
+
+
+
+
+using System;
+using System.Collections.Generic;
+using ReactiveUI;
+
+namespace YourNamespace.ViewModels
+{
+    public class ControlsViewModel : ReactiveObject
+    {
+        private string login;
+        private string password;
+        private double sliderValue;
+        private List<string> languages;
+        private string selectedLanguage;
+        private DateTime selectedDate;
+
+        public ControlsViewModel()
+        {
+            Languages = new List<string> { "C#", "Python", "JavaScript", "Java" };
+        }
+
+        public string Login
+        {
+            get => login;
+            set => this.RaiseAndSetIfChanged(ref login, value);
+        }
+
+        public string Password
+        {
+            get => password;
+            set => this.RaiseAndSetIfChanged(ref password, value);
+        }
+
+        public double SliderValue
+        {
+            get => sliderValue;
+            set => this.RaiseAndSetIfChanged(ref sliderValue, value);
+        }
+
+        public List<string> Languages
+        {
+            get => languages;
+            set => this.RaiseAndSetIfChanged(ref languages, value);
+        }
+
+        public string SelectedLanguage
+        {
+            get => selectedLanguage;
+            set => this.RaiseAndSetIfChanged(ref selectedLanguage, value);
+        }
+
+        public DateTime SelectedDate
+        {
+            get => selectedDate;
+            set => this.RaiseAndSetIfChanged(ref selectedDate, value);
+        }
+
+        public int Age
+        {
+            get
+            {
+                if (SelectedDate == DateTime.MinValue) return 0;
+                var today = DateTime.Today;
+                var age = today.Year - SelectedDate.Year;
+                if (SelectedDate.Date > today.AddYears(-age)) age--;
+                return age;
+            }
+        }
+    }
+}
+
+
+
+
+
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="YourNamespace.Views.RegistrationView">
+
+    <StackPanel>
+        <TextBox Watermark="Login" Text="{Binding UserCredentials.Name}"/>
+        <TextBox Watermark="Password" Text="{Binding UserCredentials.Password}"/>
+        <TextBox Watermark="Confirm Password" Text="{Binding UserCredentials.ConfirmPassword}"/>
+        <TextBox Watermark="Email" Text="{Binding UserCredentials.Email}"/>
+        <TextBox Watermark="Phone Number" Text="{Binding UserCredentials.PhoneNumber}"/>
+    </StackPanel>
+</UserControl>
+
+
+
+
+using System.ComponentModel.DataAnnotations;
+using ReactiveUI.Fody.Helpers;
+using ReactiveUI.Validation.Abstractions;
+using ReactiveUI.Validation.Helpers;
+
+namespace YourNamespace.Models
+{
+    public class UserCredentials : ValidatableObject
+    {
+        [Reactive]
+        [Required]
+        [RegularExpression(@"^[a-zA-Z0-9_]{3,20}$")]
+        public string Name { get; set; }
+
+        [Reactive]
+        [Required]
+        [MinLength(8)]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$")]
+        public string Password { get; set; }
+
+        [Reactive]
+        [Required]
+        [Compare("Password")]
+        public string ConfirmPassword { get; set; }
+
+        [Reactive]
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        [Reactive]
+        [Required]
+        [Phone]
+        public string PhoneNumber { get; set; }
+    }
+}
+
+
+
+
+
+using ReactiveUI;
+
+namespace YourNamespace.ViewModels
+{
+    public class RegistrationViewModel : ReactiveObject
+    {
+        private UserCredentials userCredentials;
+
+        public RegistrationViewModel()
+        {
+            UserCredentials = new UserCredentials();
+        }
+
+        public UserCredentials UserCredentials
+        {
+            get => userCredentials;
+            set => this.RaiseAndSetIfChanged(ref userCredentials, value);
+        }
+    }
+}
