@@ -1,0 +1,193 @@
+#ViewLocator.cs
+using Avalonia.Controls;
+using Avalonia.Controls.Templates;
+using System;
+
+public class ViewLocator : IDataTemplate
+{
+    public bool SupportsRecycling => false;
+
+    public Control Build(object data)
+    {
+        var name = data.GetType().FullName.Replace("ViewModel", "View");
+        var type = Type.GetType(name);
+        if (type != null)
+        {
+            return (Control)Activator.CreateInstance(type);
+        }
+        else
+        {
+            return new TextBlock { Text = "Not Found: " + name };
+        }
+    }
+
+    public bool Match(object data)
+    {
+        return data is ViewModelBase;
+    }
+}
+
+
+
+#App.axaml
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:YourNamespace"
+             x:Class="YourNamespace.App">
+
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+</Application>
+
+
+
+
+#MainViewModel.cs 
+using ReactiveUI;
+using System;
+using System.Collections.Generic;
+
+public class MainViewModel : ViewModelBase
+{
+    private ViewModelBase currentPage;
+    public static NavigationService NavigationService { get; } = new NavigationService();
+
+    public MainViewModel()
+    {
+        NavigationService.NavigateTo(new AuthorizationViewModel());
+        CurrentPage = NavigationService.CurrentViewModel;
+    }
+
+    public ViewModelBase CurrentPage
+    {
+        get => currentPage;
+        private set => this.RaiseAndSetIfChanged(ref currentPage, value);
+    }
+
+    public ReactiveCommand<Unit, Unit> GoToRegistrationCommand { get; set; }
+    public ReactiveCommand<Unit, Unit> GoToAuthorizationCommand { get; set; }
+}
+
+
+
+
+#NavigationService.cs
+using System;
+using System.Collections.Generic;
+
+public class NavigationService
+{
+    private Stack<ViewModelBase> navigationStack = new Stack<ViewModelBase>();
+
+    public ViewModelBase CurrentViewModel => navigationStack.Peek();
+
+    public void NavigateTo<T>(T viewModel, Action<T>? action = null) where T : ViewModelBase
+    {
+        action?.Invoke(viewModel);
+        navigationStack.Push(viewModel);
+    }
+
+    public void GoBack(int steps = 1)
+    {
+        if (steps > 0 && navigationStack.Count > steps)
+        {
+            navigationStack.Pop();
+        }
+    }
+}
+
+
+
+
+#MainWindow.axaml
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="YourNamespace.Views.MainWindow"
+        Width="800" Height="450">
+
+    <StackPanel>
+        <Button Content="Go to Registration" Command="{Binding GoToRegistrationCommand}"/>
+        <Button Content="Go to Authorization" Command="{Binding GoToAuthorizationCommand}"/>
+        <ContentControl Content="{Binding CurrentPage}"/>
+    </StackPanel>
+</Window>
+
+
+
+
+
+#MainWindow.axaml.cs
+using Avalonia.Controls;
+using Avalonia.ReactiveUI;
+using ReactiveUI;
+
+namespace YourNamespace.Views
+{
+    public partial class MainWindow : Window
+    {
+        public MainWindow()
+        {
+            InitializeComponent();
+            this.WhenActivated(d => { /* Bindings if needed */ });
+
+            var viewModel = new MainViewModel();
+            this.DataContext = viewModel;
+
+            viewModel.GoToRegistrationCommand = ReactiveCommand.Create(() =>
+            {
+                MainViewModel.NavigationService.NavigateTo(new RegistrationViewModel());
+            });
+
+            viewModel.GoToAuthorizationCommand = ReactiveCommand.Create(() =>
+            {
+                MainViewModel.NavigationService.NavigateTo(new AuthorizationViewModel());
+            });
+        }
+    }
+}
+
+
+
+
+#AutorizationViewModel.cs
+public class AuthorizationViewModel : ViewModelBase
+{
+    // Implementation for AuthorizationViewModel
+}
+
+
+
+
+#RegistrationViewModel.cs
+public class RegistrationViewModel : ViewModelBase
+{
+    // Implementation for RegistrationViewModel
+}
+
+
+
+
+#AutorizationView.axaml
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="YourNamespace.Views.AuthorizationView">
+
+    <StackPanel>
+        <TextBlock Text="Authorization Page"/>
+        <!-- Add authorization controls here -->
+    </StackPanel>
+</UserControl>
+
+
+
+#RegistrationView.axaml
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="YourNamespace.Views.RegistrationView">
+
+    <StackPanel>
+        <TextBlock Text="Registration Page"/>
+        <!-- Add registration controls here -->
+    </StackPanel>
+</UserControl>
