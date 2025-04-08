@@ -44,29 +44,35 @@ public class ViewLocator : IDataTemplate
 
 
 #MainViewModel.cs 
-using ReactiveUI;
-using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 
-public class MainViewModel : ViewModelBase
+public class MainViewModel : INotifyPropertyChanged
 {
-    private ViewModelBase currentPage;
+    private ViewModelBase _currentPage;
+
+    public ViewModelBase CurrentPage
+    {
+        get => _currentPage;
+        set
+        {
+            _currentPage = value;
+            OnPropertyChanged(nameof(CurrentPage));
+        }
+    }
+
     public static NavigationService NavigationService { get; } = new NavigationService();
 
     public MainViewModel()
     {
-        NavigationService.NavigateTo(new AuthorizationViewModel());
-        CurrentPage = NavigationService.CurrentViewModel;
+        NavigationService.NavigateTo(new RegistrationViewModel());
     }
 
-    public ViewModelBase CurrentPage
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected virtual void OnPropertyChanged(string propertyName)
     {
-        get => currentPage;
-        private set => this.RaiseAndSetIfChanged(ref currentPage, value);
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
-
-    public ReactiveCommand<Unit, Unit> GoToRegistrationCommand { get; set; }
-    public ReactiveCommand<Unit, Unit> GoToAuthorizationCommand { get; set; }
 }
 
 
@@ -74,25 +80,37 @@ public class MainViewModel : ViewModelBase
 
 #NavigationService.cs
 using System;
+using System;
 using System.Collections.Generic;
 
 public class NavigationService
 {
-    private Stack<ViewModelBase> navigationStack = new Stack<ViewModelBase>();
-
-    public ViewModelBase CurrentViewModel => navigationStack.Peek();
+    private readonly Stack<ViewModelBase> _navigationStack = new Stack<ViewModelBase>();
 
     public void NavigateTo<T>(T viewModel, Action<T>? action = null) where T : ViewModelBase
     {
         action?.Invoke(viewModel);
-        navigationStack.Push(viewModel);
+        _navigationStack.Push(viewModel);
+        UpdateCurrentPage(viewModel);
     }
 
     public void GoBack(int steps = 1)
     {
-        if (steps > 0 && navigationStack.Count > steps)
+        if (steps > 0 && _navigationStack.Count > steps)
         {
-            navigationStack.Pop();
+            _navigationStack.Pop();
+            UpdateCurrentPage(_navigationStack.Peek());
+        }
+    }
+
+    private void UpdateCurrentPage(ViewModelBase viewModel)
+    {
+        if (App.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
+        {
+            if (desktopLifetime.MainWindow.DataContext is MainViewModel mainViewModel)
+            {
+                mainViewModel.CurrentPage = viewModel;
+            }
         }
     }
 }
@@ -100,15 +118,15 @@ public class NavigationService
 
 
 
+
 #MainWindow.axaml
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        x:Class="YourNamespace.Views.MainWindow"
-        Width="800" Height="450">
+        x:Class="ИмяПроекта.Views.MainWindow">
 
     <StackPanel>
-        <Button Content="Go to Registration" Command="{Binding GoToRegistrationCommand}"/>
-        <Button Content="Go to Authorization" Command="{Binding GoToAuthorizationCommand}"/>
+        <Button Content="Регистрация" Click="OnGoToRegistration"/>
+        <Button Content="Авторизация" Click="OnGoToAuthorization"/>
         <ContentControl Content="{Binding CurrentPage}"/>
     </StackPanel>
 </Window>
@@ -117,35 +135,32 @@ public class NavigationService
 
 
 
+
 #MainWindow.axaml.cs
 using Avalonia.Controls;
-using Avalonia.ReactiveUI;
-using ReactiveUI;
 
-namespace YourNamespace.Views
+namespace ИмяПроекта.Views
 {
     public partial class MainWindow : Window
     {
         public MainWindow()
         {
             InitializeComponent();
-            this.WhenActivated(d => { /* Bindings if needed */ });
+            DataContext = new MainViewModel();
+        }
 
-            var viewModel = new MainViewModel();
-            this.DataContext = viewModel;
+        private void OnGoToRegistration(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            MainViewModel.NavigationService.NavigateTo(new RegistrationViewModel());
+        }
 
-            viewModel.GoToRegistrationCommand = ReactiveCommand.Create(() =>
-            {
-                MainViewModel.NavigationService.NavigateTo(new RegistrationViewModel());
-            });
-
-            viewModel.GoToAuthorizationCommand = ReactiveCommand.Create(() =>
-            {
-                MainViewModel.NavigationService.NavigateTo(new AuthorizationViewModel());
-            });
+        private void OnGoToAuthorization(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            MainViewModel.NavigationService.NavigateTo(new AuthorizationViewModel());
         }
     }
 }
+
 
 
 
