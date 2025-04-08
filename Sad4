@@ -1,0 +1,111 @@
+#User
+public class User
+{
+    public string Login { get; set; }
+    public string Password { get; set; }
+}
+
+
+
+#UserListViewModel
+using System.Collections.ObjectModel;
+using System.Windows.Input;
+using ReactiveUI;
+
+public class UserListViewModel : ReactiveObject
+{
+    public ObservableCollection<User> Users { get; set; }
+
+    public ICommand AddUserCommand { get; }
+    public ICommand DeleteUserCommand { get; }
+
+    private string newLogin;
+    private string newPassword;
+
+    public string NewLogin
+    {
+        get => newLogin;
+        set => this.RaiseAndSetIfChanged(ref newLogin, value);
+    }
+
+    public string NewPassword
+    {
+        get => newPassword;
+        set => this.RaiseAndSetIfChanged(ref newPassword, value);
+    }
+
+    public UserListViewModel()
+    {
+        Users = new ObservableCollection<User>
+        {
+            new User { Login = "user1", Password = "pass1" },
+            new User { Login = "user2", Password = "pass2" }
+        };
+
+        AddUserCommand = ReactiveCommand.Create(() =>
+        {
+            Users.Add(new User { Login = NewLogin, Password = NewPassword });
+            NewLogin = string.Empty;
+            NewPassword = string.Empty;
+        });
+
+        DeleteUserCommand = ReactiveCommand.Create<User>(user =>
+        {
+            Users.Remove(user);
+        });
+    }
+}
+
+
+
+#UserListView
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="YourNamespace.Views.UserListView">
+
+    <StackPanel>
+        <TextBox Text="{Binding NewLogin, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Login"/>
+        <TextBox Text="{Binding NewPassword, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Password"/>
+        <Button Content="Добавить" Command="{Binding AddUserCommand}"/>
+
+        <ListBox Items="{Binding Users}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Login}"/>
+                        <TextBlock Text="{Binding Password}" Margin="10,0,0,0"/>
+                        <Button Content="Удалить" Command="{Binding $parent[UserControl].DataContext.DeleteUserCommand}" CommandParameter="{Binding}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <DataGrid Items="{Binding Users}" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Логин" Binding="{Binding Login}"/>
+                <DataGridTextColumn Header="Пароль" Binding="{Binding Password}"/>
+                <DataGridTemplateColumn Header="Удалить">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Удалить" Command="{Binding $parent[UserControl].DataContext.DeleteUserCommand}" CommandParameter="{Binding}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </StackPanel>
+</UserControl>
+
+
+
+#App.axaml
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="YourNamespace.App">
+    <Application.Styles>
+        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+    </Application.Styles>
+</Application>
