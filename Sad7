@@ -1,0 +1,181 @@
+#AppDbContext.cs
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.IO;
+
+public class AppDbContext : DbContext
+{
+    public DbSet<User> Users { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        string dbPath = GetDatabasePath("app.db");
+        optionsBuilder.UseSqlite($"Data Source={dbPath}");
+    }
+
+    private static string GetDatabasePath(string fileName)
+    {
+        string folder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        return Path.Combine(folder, fileName);
+    }
+}
+
+
+#User.cs
+public class User
+{
+    public int Id { get; set; }
+    public string Login { get; set; }
+    public string Password { get; set; }
+}
+
+
+#UserService.cs
+using System.Collections.Generic;
+using System.Linq;
+
+public class UserService
+{
+    private readonly AppDbContext _context;
+
+    public UserService(AppDbContext context)
+    {
+        _context = context;
+        _context.Database.EnsureCreated();
+    }
+
+    public void AddUser(User user)
+    {
+        _context.Users.Add(user);
+        _context.SaveChanges();
+    }
+
+    public List<User> GetUsers()
+    {
+        return _context.Users.ToList();
+    }
+
+    public void DeleteUser(int userId)
+    {
+        var user = _context.Users.Find(userId);
+        if (user != null)
+        {
+            _context.Users.Remove(user);
+            _context.SaveChanges();
+        }
+    }
+
+    public void UpdateUser(User user)
+    {
+        _context.Users.Update(user);
+        _context.SaveChanges();
+    }
+}
+
+
+
+#App.xaml.cs
+public override void Initialize()
+{
+    AvaloniaXamlLoader.Load(this);
+
+    var context = new AppDbContext();
+    var userService = new UserService(context);
+
+    // Передайте userService в вашу ViewModel
+}
+
+
+
+#MainWindow.xaml
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="MyAvaloniaApp.MainWindow"
+        Title="MyAvaloniaApp">
+
+    <StackPanel>
+        <TextBox x:Name="LoginTextBox" PlaceholderText="Login"/>
+        <TextBox x:Name="PasswordTextBox" PlaceholderText="Password"/>
+        <Button Content="Create" Click="OnCreateButtonClicked"/>
+        <ListBox x:Name="UsersListBox">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Login}"/>
+                        <Button Content="Delete" Click="OnDeleteButtonClicked"/>
+                        <Button Content="Edit" Click="OnEditButtonClicked"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Button Content="Save" Click="OnSaveButtonClicked"/>
+    </StackPanel>
+</Window>
+
+
+
+#MainWindow.xaml.cs
+using Avalonia.Controls;
+using Avalonia.Interactivity;
+using System.Linq;
+
+public partial class MainWindow : Window
+{
+    private readonly UserService _userService;
+    private User _currentUser;
+
+    public MainWindow()
+    {
+        InitializeComponent();
+        var context = new AppDbContext();
+        _userService = new UserService(context);
+        LoadUsers();
+    }
+
+    private void LoadUsers()
+    {
+        UsersListBox.Items = _userService.GetUsers();
+    }
+
+    private void OnCreateButtonClicked(object sender, RoutedEventArgs e)
+    {
+        var user = new User
+        {
+            Login = LoginTextBox.Text,
+            Password = PasswordTextBox.Text
+        };
+        _userService.AddUser(user);
+        LoadUsers();
+    }
+
+    private void OnDeleteButtonClicked(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button button && button.DataContext is User user)
+        {
+            _userService.DeleteUser(user.Id);
+            LoadUsers();
+        }
+    }
+
+    private void OnEditButtonClicked(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button button && button.DataContext is User user)
+        {
+            _currentUser = user;
+            LoginTextBox.Text = user.Login;
+            PasswordTextBox.Text = user.Password;
+        }
+    }
+
+    private void OnSaveButtonClicked(object sender, RoutedEventArgs e)
+    {
+        if (_currentUser != null)
+        {
+            _currentUser.Login = LoginTextBox.Text;
+            _currentUser.Password = PasswordTextBox.Text;
+            _userService.UpdateUser(_currentUser);
+            LoadUsers();
+            _currentUser = null;
+        }
+    }
+}
