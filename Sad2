@@ -206,3 +206,62 @@ namespace YourNamespace.ViewModels
         }
     }
 }
+
+
+
+
+
+using ReactiveUI.Validation;
+using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
+
+public class UserCredentials : ObservableValidator
+{
+    [ObservableProperty]
+    [NotifyDataErrorInfo]
+    private string name;
+
+    [ObservableProperty]
+    [NotifyDataErrorInfo]
+    private string password;
+
+    [ObservableProperty]
+    [NotifyDataErrorInfo]
+    private string confirmPassword;
+
+    [ObservableProperty]
+    [NotifyDataErrorInfo]
+    private string email;
+
+    [ObservableProperty]
+    [NotifyDataErrorInfo]
+    private string phoneNumber;
+
+    public UserCredentials()
+    {
+        ValidationRule(
+            nameof(Name),
+            name => !string.IsNullOrWhiteSpace(name) && Regex.IsMatch(name, @"^[a-zA-Z0-9_]{3,20}$"),
+            "Login must be 3-20 characters long and contain only letters, numbers, and underscores.");
+
+        ValidationRule(
+            nameof(Password),
+            password => !string.IsNullOrWhiteSpace(password) && Regex.IsMatch(password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"),
+            "Password must be at least 8 characters long and contain uppercase, lowercase, number, and special character.");
+
+        ValidationRule(
+            nameof(ConfirmPassword),
+            confirmPassword => confirmPassword == Password,
+            "Passwords do not match.");
+
+        ValidationRule(
+            nameof(Email),
+            email => !string.IsNullOrWhiteSpace(email) && Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"),
+            "Invalid email address.");
+
+        ValidationRule(
+            nameof(PhoneNumber),
+            phoneNumber => !string.IsNullOrWhiteSpace(phoneNumber) && Regex.IsMatch(phoneNumber, @"^\+?[1-9]\d{1,14}$"),
+            "Invalid phone number.");
+    }
+}
