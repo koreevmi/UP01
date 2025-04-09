@@ -265,3 +265,145 @@ public class UserCredentials : ObservableValidator
             "Invalid phone number.");
     }
 }
+
+
+
+
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
+
+public class UserCredentials : INotifyPropertyChanged, INotifyDataErrorInfo
+{
+    private string _name;
+    private string _password;
+    private string _confirmPassword;
+    private string _email;
+    private string _phoneNumber;
+
+    public string Name
+    {
+        get => _name;
+        set
+        {
+            _name = value;
+            OnPropertyChanged();
+            ValidateProperty(value, nameof(Name));
+        }
+    }
+
+    public string Password
+    {
+        get => _password;
+        set
+        {
+            _password = value;
+            OnPropertyChanged();
+            ValidateProperty(value, nameof(Password));
+        }
+    }
+
+    public string ConfirmPassword
+    {
+        get => _confirmPassword;
+        set
+        {
+            _confirmPassword = value;
+            OnPropertyChanged();
+            ValidateProperty(value, nameof(ConfirmPassword));
+        }
+    }
+
+    public string Email
+    {
+        get => _email;
+        set
+        {
+            _email = value;
+            OnPropertyChanged();
+            ValidateProperty(value, nameof(Email));
+        }
+    }
+
+    public string PhoneNumber
+    {
+        get => _phoneNumber;
+        set
+        {
+            _phoneNumber = value;
+            OnPropertyChanged();
+            ValidateProperty(value, nameof(PhoneNumber));
+        }
+    }
+
+    private readonly Dictionary<string, List<string>> _errors = new();
+
+    public event PropertyChangedEventHandler PropertyChanged;
+    public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
+
+    protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    public IEnumerable GetErrors(string propertyName)
+    {
+        return _errors.ContainsKey(propertyName) ? _errors[propertyName] : null;
+    }
+
+    public bool HasErrors => _errors.Any();
+
+    private void ValidateProperty(string value, string propertyName)
+    {
+        List<string> errors = new();
+
+        switch (propertyName)
+        {
+            case nameof(Name):
+                if (string.IsNullOrWhiteSpace(value) || !Regex.IsMatch(value, @"^[a-zA-Z0-9_]{3,20}$"))
+                {
+                    errors.Add("Login must be 3-20 characters long and contain only letters, numbers, and underscores.");
+                }
+                break;
+            case nameof(Password):
+                if (string.IsNullOrWhiteSpace(value) || !Regex.IsMatch(value, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"))
+                {
+                    errors.Add("Password must be at least 8 characters long and contain uppercase, lowercase, number, and special character.");
+                }
+                break;
+            case nameof(ConfirmPassword):
+                if (value != Password)
+                {
+                    errors.Add("Passwords do not match.");
+                }
+                break;
+            case nameof(Email):
+                if (string.IsNullOrWhiteSpace(value) || !Regex.IsMatch(value, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+                {
+                    errors.Add("Invalid email address.");
+                }
+                break;
+            case nameof(PhoneNumber):
+                if (string.IsNullOrWhiteSpace(value) || !Regex.IsMatch(value, @"^\+?[1-9]\d{1,14}$"))
+                {
+                    errors.Add("Invalid phone number.");
+                }
+                break;
+        }
+
+        if (errors.Any())
+        {
+            _errors[propertyName] = errors;
+        }
+        else
+        {
+            _errors.Remove(propertyName);
+        }
+
+        ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
+    }
+}
