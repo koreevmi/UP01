@@ -1,0 +1,121 @@
+#App.axaml
+
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:themes="clr-namespace:Material.Styles.Themes;assembly=Material.Styles"
+             x:Class="AvaloniaStylingApp.App">
+    <Application.Styles>
+        <!-- Общий стиль для всех кнопок -->
+        <Style Selector="Button">
+            <Setter Property="Background" Value="LightBlue"/>
+            <Setter Property="FontFamily" Value="Arial"/>
+        </Style>
+
+        <!-- Стиль для TextBox с именем "Title" -->
+        <Style Selector="TextBox#Title">
+            <Setter Property="Background" Value="LightYellow"/>
+            <Setter Property="FontFamily" Value="Verdana"/>
+        </Style>
+
+        <!-- Стиль для кнопок внутри StackPanel -->
+        <Style Selector="StackPanel Button">
+            <Setter Property="Background" Value="LightGreen"/>
+            <Setter Property="FontFamily" Value="Courier New"/>
+        </Style>
+
+        <!-- Стиль для TextBlock с курсивным начертанием -->
+        <Style Selector=".highlight TextBlock">
+            <Setter Property="FontStyle" Value="Italic"/>
+        </Style>
+
+        <!-- Стиль для кнопки при наведении -->
+        <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="LightCoral"/>
+        </Style>
+
+        <!-- Стиль для TextBox при фокусировке -->
+        <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="Blue"/>
+        </Style>
+
+        <!-- Стиль для выбранного элемента ListBoxItem -->
+        <Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="LightGray"/>
+        </Style>
+
+        <!-- Стиль для четных элементов ListBoxItem -->
+        <Style Selector="ListBoxItem:nth-child(even)">
+            <Setter Property="Background" Value="LightCyan"/>
+        </Style>
+
+        <!-- Стили для TextBlock с разными цветами текста -->
+        <Style Selector="TextBlock.income">
+            <Setter Property="Foreground" Value="Green"/>
+        </Style>
+
+        <Style Selector="TextBlock.expense">
+            <Setter Property="Foreground" Value="Red"/>
+        </Style>
+
+        <!-- Стиль для всех наследников Button -->
+        <Style Selector=":is(Button)">
+            <Setter Property="Background" Value="LightGoldenrodYellow"/>
+        </Style>
+
+        <!-- Стиль для TextBlock с размером шрифта 16 -->
+        <Style Selector="TextBlock[FontSize=16]">
+            <Setter Property="Foreground" Value="DarkBlue"/>
+        </Style>
+
+        <!-- Тема Material Avalonia -->
+        <themes:MaterialTheme BaseTheme="Light" PrimaryColor="Purple" SecondaryColor="Lime"/>
+    </Application.Styles>
+</Application>
+
+
+
+#MoneyOperstion.cs
+public class MoneyOperation
+{
+    public string Description { get; set; }
+    public decimal Amount { get; set; }
+    public bool IsIncome { get; set; }
+}
+
+
+
+#MainView.axaml
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:a="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
+        x:Class="AvaloniaStylingApp.Views.MainView">
+    <StackPanel>
+        <TextBlock Text="Пример текста"/>
+        <TextBox a:TextFieldAssist.Label="TextBox"
+                 UseFloatingWatermark="True"
+                 Theme="{StaticResource OutlineTextBox}"
+                 Classes="outline densed"/>
+        <Button Content="Нажми меня"/>
+        <CheckBox Content="Отметь меня"/>
+        <RadioButton Content="Опция 1"/>
+        <RadioButton Content="Опция 2"/>
+        <DatePicker/>
+        <ComboBox Theme="{StaticResource MaterialOutlineComboBox}"
+                  a:ComboBoxAssist.Label="ComboBox">
+            <ComboBoxItem Content="Опция 1"/>
+            <ComboBoxItem Content="Опция 2"/>
+        </ComboBox>
+
+        <!-- Пример использования привязки данных -->
+        <ItemsControl Items="{Binding Operations}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock
+                        Classes.income="{Binding IsIncome}"
+                        Classes.expense="{Binding !IsIncome}"
+                        Text="{Binding Amount}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+</Window>
