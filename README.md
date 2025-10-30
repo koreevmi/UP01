@@ -1,12 +1,15 @@
 @startuml
 
+left to right direction
+skinparam linetype ortho
+
 ' Актёры
-actor Администратор
-actor Инженер
-actor Гость
+actor Администратор as Admin
+actor Инженер as Eng
+actor Гость as Guest
 
 ' Варианты использования
-usecase Авторизация
+usecase Авторизация as Auth
 usecase "Управление пользователями" as UserManagement
 usecase "Управление материалами" as MaterialManagement
 usecase "Контроль остатков на складах" as StockControl
@@ -17,39 +20,41 @@ usecase "Просмотр проектов" as ViewProjects
 usecase "Управление проектами" as ProjectManagement
 
 ' Связи для Администратора
-Администратор --> Авторизация
-Администратор --> UserManagement
-Администратор --> MaterialManagement
-Администратор --> StockControl
-Администратор --> SupplyFixation
-Администратор --> ReportGeneration
-Администратор --> ProjectManagement
+Admin -- Auth
+Admin -- UserManagement
+Admin -- MaterialManagement
+Admin -- StockControl
+Admin -- SupplyFixation
+Admin -- ReportGeneration
+Admin -- ProjectManagement
+Admin -- ViewMaterials
 
 ' Связи для Инженера
-Инженер --> Авторизация
-Инженер --> MaterialManagement
-Инженер --> StockControl
-Инженер --> SupplyFixation
-Инженер --> ReportGeneration
-Инженер --> ProjectManagement
+Eng -- Auth
+Eng -- MaterialManagement
+Eng -- StockControl
+Eng -- SupplyFixation
+Eng -- ReportGeneration
+Eng -- ProjectManagement
+Eng -- ViewMaterials
 
 ' Связи для Гостя
-Гость --> Авторизация : "Вход как гость"
-Гость --> ViewMaterials
-Гость --> ViewProjects
+Guest -- Auth : "Вход как гость"
+Guest -- ViewMaterials
+Guest -- ViewProjects
 
 ' Группировка вариантов использования
-rectangle "Учёт материалов" {
+rectangle MaterialManagement {
     MaterialManagement
     StockControl
     SupplyFixation
 }
 
-rectangle "Отчётность" {
+rectangle Reporting {
     ReportGeneration
 }
 
-rectangle "Проекты" {
+rectangle ProjectManagementGroup {
     ProjectManagement
     ViewProjects
 }
