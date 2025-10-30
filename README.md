@@ -1,62 +1,44 @@
-@startuml
+**1.4 Выбор состава программных и технических средств**
 
-left to right direction
-skinparam linetype ortho
+Согласно цели проекта требуется создать **оконное приложение для учёта дорожно-строительных материалов**.
 
-' Актёры
-actor Администратор as Admin
-actor Инженер as Eng
-actor Гость as Guest
+Работа с приложением будет осуществляться на компьютерах с **операционной системой Windows 10** и выше с **интернет-подключением**.
 
-' Варианты использования
-usecase Авторизация as Auth
-usecase "Управление пользователями" as UserManagement
-usecase "Управление материалами" as MaterialManagement
-usecase "Контроль остатков на складах" as StockControl
-usecase "Фиксация поставок" as SupplyFixation
-usecase "Формирование отчётности" as ReportGeneration
-usecase "Просмотр материалов" as ViewMaterials
-usecase "Просмотр проектов" as ViewProjects
-usecase "Управление проектами" as ProjectManagement
+В качестве **системы управления базами данных (СУБД)** выбрана **Microsoft SQL Server 2019**. Эта СУБД обеспечивает высокую производительность, надёжность и удобство интеграции с приложениями на платформе .NET.
 
-' Связи для Администратора
-Admin -- Auth
-Admin -- UserManagement
-Admin -- MaterialManagement
-Admin -- StockControl
-Admin -- SupplyFixation
-Admin -- ReportGeneration
-Admin -- ProjectManagement
-Admin -- ViewMaterials
+Приложение будет написано на **языке программирования C#** с использованием **фреймворка WPF (Windows Presentation Foundation)**, который предоставляет удобные инструменты для создания оконных приложений с современным интерфейсом.
 
-' Связи для Инженера
-Eng -- Auth
-Eng -- MaterialManagement
-Eng -- StockControl
-Eng -- SupplyFixation
-Eng -- ReportGeneration
-Eng -- ProjectManagement
-Eng -- ViewMaterials
+Для разработки приложения будет использоваться **Visual Studio 2022**, которая обеспечивает удобный предпросмотр интерфейса, быструю перезагрузку и отладку кода.
 
-' Связи для Гостя
-Guest -- Auth : "Вход как гость"
-Guest -- ViewMaterials
-Guest -- ViewProjects
+---
 
-' Группировка вариантов использования
-rectangle MaterialManagement {
-    MaterialManagement
-    StockControl
-    SupplyFixation
-}
+### Требования для развёртывания системы:
 
-rectangle Reporting {
-    ReportGeneration
-}
+#### Серверная часть:
 
-rectangle ProjectManagementGroup {
-    ProjectManagement
-    ViewProjects
-}
+Для функционирования системы на стороне сервера необходимы следующие программные и технические средства:
 
-@enduml
+- **Операционная система:** Windows Server 2019 или выше.
+- **Сервер базы данных:** Microsoft SQL Server 2019.
+- **Аппаратные требования:**
+  - Процессор: 2 ядра по 2 ГГц или выше.
+  - Оперативная память: 4 ГБ или выше.
+  - Жёсткий диск: 50 ГБ свободного пространства.
+- **Программное обеспечение для администрирования БД:** Microsoft SQL Server Management Studio (SSMS).
+
+---
+
+#### Клиентская часть:
+
+Для функционирования системы на стороне клиента необходимы следующие программные и технические средства:
+
+- **Операционная система:** Windows 10 или выше.
+- **Аппаратные требования:**
+  - Процессор: частота 1 ГГц или быстрее.
+  - Оперативная память: 2 ГБ или выше.
+  - Свободное место на диске: 100 МБ.
+- **Постоянное интернет-подключение** для взаимодействия с серверной базой данных.
+
+---
+
+Этот текст полностью соответствует вашему стеку технологий (Windows, C#, WPF, Visual Studio 2022, Microsoft SQL Server 2019, SSMS) и требованиям для развёртывания вашего проекта.
