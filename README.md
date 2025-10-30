@@ -1,49 +1,55 @@
 @startuml
 
-' Направление диаграммы: актёры слева, варианты использования справа
-left to right direction
-
-' Настройка для прямых линий
-skinparam linetype ortho
-
 ' Определение актёров
-actor Администратор as Admin
-actor Инженер as Engineer
-actor Гость as Guest
+actor Администратор
+actor Инженер
+actor Гость
 
-' Определение вариантов использования
-usecase Авторизация as Auth
+' Определение вариантов использования (Use Cases)
+usecase "Авторизация" as Auth
 usecase "Управление пользователями" as UserManagement
 usecase "Управление материалами" as MaterialManagement
-usecase "Просмотр материалов" as ViewMaterials
 usecase "Контроль остатков на складах" as StockControl
 usecase "Фиксация поставок" as SupplyFixation
 usecase "Формирование отчётности" as ReportGeneration
+usecase "Просмотр материалов" as ViewMaterials
 usecase "Просмотр проектов" as ViewProjects
 usecase "Управление проектами" as ProjectManagement
 
-' Связи для Администратора
-Admin -- Auth
-Admin -- UserManagement
-Admin -- MaterialManagement
-Admin -- ViewMaterials
-Admin -- StockControl
-Admin -- SupplyFixation
-Admin -- ReportGeneration
-Admin -- ProjectManagement
+' Связи актёров с вариантами использования
+Администратор --> Auth
+Администратор --> UserManagement
+Администратор --> MaterialManagement
+Администратор --> StockControl
+Администратор --> SupplyFixation
+Администратор --> ReportGeneration
+Администратор --> ProjectManagement
 
-' Связи для Инженера
-Engineer -- Auth
-Engineer -- MaterialManagement
-Engineer -- ViewMaterials
-Engineer -- StockControl
-Engineer -- SupplyFixation
-Engineer -- ReportGeneration
-Engineer -- ProjectManagement
+Инженер --> Auth
+Инженер --> MaterialManagement
+Инженер --> StockControl
+Инженер --> SupplyFixation
+Инженер --> ReportGeneration
+Инженер --> ProjectManagement
 
-' Связи для Гостя
-Guest -- Auth
-Guest -- ViewMaterials
-Guest -- ViewProjects
+Гость --> Auth : "Вход как гость"
+Гость --> ViewMaterials
+Гость --> ViewProjects
+
+' Группировка вариантов использования
+rectangle "Учёт материалов" {
+    MaterialManagement
+    StockControl
+    SupplyFixation
+}
+
+rectangle "Отчётность" {
+    ReportGeneration
+}
+
+rectangle "Проекты" {
+    ProjectManagement
+    ViewProjects
+}
 
 @enduml
