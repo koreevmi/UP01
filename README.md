@@ -1,12 +1,12 @@
 @startuml
 
-' Определение актёров
+' Актёры
 actor Администратор
 actor Инженер
 actor Гость
 
-' Определение вариантов использования (Use Cases)
-usecase "Авторизация" as Auth
+' Варианты использования
+usecase Авторизация
 usecase "Управление пользователями" as UserManagement
 usecase "Управление материалами" as MaterialManagement
 usecase "Контроль остатков на складах" as StockControl
@@ -16,8 +16,8 @@ usecase "Просмотр материалов" as ViewMaterials
 usecase "Просмотр проектов" as ViewProjects
 usecase "Управление проектами" as ProjectManagement
 
-' Связи актёров с вариантами использования
-Администратор --> Auth
+' Связи для Администратора
+Администратор --> Авторизация
 Администратор --> UserManagement
 Администратор --> MaterialManagement
 Администратор --> StockControl
@@ -25,14 +25,16 @@ usecase "Управление проектами" as ProjectManagement
 Администратор --> ReportGeneration
 Администратор --> ProjectManagement
 
-Инженер --> Auth
+' Связи для Инженера
+Инженер --> Авторизация
 Инженер --> MaterialManagement
 Инженер --> StockControl
 Инженер --> SupplyFixation
 Инженер --> ReportGeneration
 Инженер --> ProjectManagement
 
-Гость --> Auth : "Вход как гость"
+' Связи для Гостя
+Гость --> Авторизация : "Вход как гость"
 Гость --> ViewMaterials
 Гость --> ViewProjects
 
