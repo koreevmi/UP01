@@ -1,15 +1,74 @@
-**1.4 Выбор состава программных и технических средств**
+erDiagram
+    Users ||--o{ Projects : "управляет"
+    Users ||--o{ Materials : "управляет"
+    Users ||--o{ Reports : "формирует"
+    Suppliers ||--o{ Materials : "поставляет"
+    Projects ||--o{ ProjectMaterials : "включает"
+    Materials ||--o{ ProjectMaterials : "используется"
+    Materials ||--o{ StockMovements : "имеет"
+    Materials }|--|| Suppliers : "поставляется"
 
-Согласно цели проекта требуется создать **оконное приложение для учёта дорожно-строительных материалов**.
+    Users {
+        int UserId PK
+        string Login
+        string Password
+        string FullName
+        string Email
+        string Role
+    }
 
-Работа с приложением будет осуществляться на компьютерах с **операционной системой Windows 10** и выше с **интернет-подключением**.
+    Projects {
+        int ProjectId PK
+        string Name
+        string Description
+        datetime StartDate
+        datetime EndDate
+        decimal Budget
+        string Status
+    }
 
-В качестве **системы управления базами данных (СУБД)** выбрана **Microsoft SQL Server 2019**. Эта СУБД обеспечивает высокую производительность, надёжность и удобство интеграции с приложениями на платформе .NET.
+    Materials {
+        int MaterialId PK
+        string Name
+        string Unit
+        int StockQuantity
+        decimal CostPerUnit
+        int SupplierId FK
+    }
 
-Приложение будет написано на **языке программирования C#** с использованием **фреймворка WPF (Windows Presentation Foundation)**, который предоставляет удобные инструменты для создания оконных приложений с современным интерфейсом.
+    Suppliers {
+        int SupplierId PK
+        string Name
+        string ContactPerson
+        string Phone
+        string Email
+        string Address
+    }
 
-Для разработки приложения будет использоваться **Visual Studio 2022**, которая обеспечивает удобный предпросмотр интерфейса, быструю перезагрузку и отладку кода.
+    ProjectMaterials {
+        int ProjectMaterialId PK
+        int ProjectId FK
+        int MaterialId FK
+        int PlannedQuantity
+        int UsedQuantity
+    }
 
+    StockMovements {
+        int MovementId PK
+        int MaterialId FK
+        int Quantity
+        string MovementType
+        datetime MovementDate
+    }
+
+    Reports {
+        int ReportId PK
+        string Name
+        string Type
+        datetime CreationDate
+        string FilePath
+    }
+    
 ---
 
 ### Требования для развёртывания системы:
